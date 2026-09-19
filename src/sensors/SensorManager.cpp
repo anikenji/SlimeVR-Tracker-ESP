@@ -74,6 +74,20 @@ void SensorManager::update() {
 
 	statusManager.setStatus(SlimeVR::Status::IMU_ERROR, !allIMUGood);
 
+	// Multi-Tracker Kinematic Joint Constraint (Seel-Schauer):
+	// Automatically eliminate relative yaw drift when primary and secondary trackers
+	// share a biomechanical limb chain (e.g. Upper Leg & Lower Leg).
+	if (m_Sensors.size() >= 2 && m_Sensors[0]->isWorking() && m_Sensors[1]->isWorking()) {
+		if (m_Sensors[0]->hasNewDataToSend() && m_Sensors[1]->hasNewDataToSend()) {
+			Quat q1 = m_Sensors[0]->getFusedRotation();
+			Quat q2 = m_Sensors[1]->getFusedRotation();
+			Quat correction = m_JointConstraint.calculateCorrection(q1, q2);
+			if (correction.w != 1.0f || correction.z != 0.0f) {
+				m_Sensors[1]->setFusedRotation(correction * q2);
+			}
+		}
+	}
+
 	if (!networkConnection.isConnected()) {
 		return;
 	}

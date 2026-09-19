@@ -59,10 +59,12 @@ struct BMI160 {
 		= 2.0f;  // wow maybe BMI270 isn't that bad actually
 
 	static constexpr VQFParams SensorVQFParams{
-		// need to be refined, this IMU sucks
+		// Titan-160 tuned parameters for BMI160
 		.motionBiasEstEnabled = true,
-		.biasSigmaInit = 0.5f,
-		.biasClip = 2.0f,
+		.motionBiasAccGateEnabled = true,
+		.motionBiasAccGate = 0.8f,
+		.biasSigmaInit = 0.3f,
+		.biasClip = 1.0f,
 		.restThGyr = 0.5f,
 		.restThAcc = 0.196f,
 	};
