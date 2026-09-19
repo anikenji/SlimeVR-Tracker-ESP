@@ -87,8 +87,8 @@ SensorBuilder::buildSensorDynamically(SensorTypeID type, SensorDefinition sensor
 		//	);
 		// case SensorTypeID::BNO086:
 		//	return buildSensor<BNO086Sensor>(sensorDef);
-		// case SensorTypeID::BMI160:
-		// 	return buildSensor<BMI160Sensor>(sensorDef);
+		case SensorTypeID::BMI160:
+			return buildSensor<SoftFusionBMI160>(sensorDef);
 		// case SensorTypeID::ICM20948:
 		//	return buildSensor<ICM20948Sensor>(sensorDef);
 		// case SensorTypeID::ICM42688:

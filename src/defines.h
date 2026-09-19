@@ -27,7 +27,7 @@
 
 // Set parameters of IMU and board used
 #ifndef IMU
-#define IMU IMU_AUTO
+#define IMU IMU_BMI160
 #endif
 #ifndef SECOND_IMU
 #define SECOND_IMU IMU_AUTO

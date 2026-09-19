@@ -214,15 +214,12 @@ public:
 
 		return checkSensorsPresent<
 			AccessInterface,
-			// SoftFusionLSM6DS3TRC,
-			// SoftFusionICM42688,
+			SoftFusionBMI160,
 			SoftFusionBMI270,
 			SoftFusionLSM6DSV,
 			SoftFusionLSM6DSO,
 			SoftFusionLSM6DSR,
-			// SoftFusionMPU6050,
 			SoftFusionICM45686,
-			// SoftFusionICM45605
 			BNO085Sensor>(sensorID, sensorInterface, accessInterface);
 	}
 
