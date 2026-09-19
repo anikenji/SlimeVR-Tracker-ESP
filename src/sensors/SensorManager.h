@@ -35,7 +35,6 @@
 #include "sensorinterface/I2CPCAInterface.h"
 #include "sensorinterface/I2CWireSensorInterface.h"
 #include "sensorinterface/MCP23X17PinInterface.h"
-#include "motionprocessing/KinematicJointConstraint.h"
 #include "sensorinterface/RegisterInterface.h"
 #include "sensorinterface/i2cimpl.h"
 
@@ -62,7 +61,6 @@ private:
 	SlimeVR::Logging::Logger m_Logger;
 
 	std::vector<std::unique_ptr<::Sensor>> m_Sensors;
-	SlimeVR::MotionProcessing::KinematicJointConstraint m_JointConstraint;
 	Adafruit_MCP23X17 m_MCP;
 
 	uint32_t m_LastBundleSentAtMicros = micros();

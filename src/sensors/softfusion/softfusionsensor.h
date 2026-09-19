@@ -35,8 +35,6 @@
 #include "TempGradientCalculator.h"
 #include "imuconsts.h"
 #include "motionprocessing/types.h"
-#include "motionprocessing/BioStanceDetector.h"
-#include "motionprocessing/ThermalPolyCalibrator.h"
 #include "sensors/SensorFusion.h"
 #include "sensors/softfusion/magdriver.h"
 
@@ -116,10 +114,6 @@ class SoftFusionSensor : public Sensor {
 
 		calibrator.scaleAccelSample(accelData);
 
-		m_lastAccelData[0] = accelData[0];
-		m_lastAccelData[1] = accelData[1];
-		m_lastAccelData[2] = accelData[2];
-
 		m_fusion.updateAcc(accelData, calibrator.getAccelTimestep());
 
 		calibrator.provideAccelSample(xyz);
@@ -131,18 +125,6 @@ class SoftFusionSensor : public Sensor {
 			   static_cast<sensor_real_t>(xyz[1]),
 			   static_cast<sensor_real_t>(xyz[2])};
 		calibrator.scaleGyroSample(gyroData);
-
-		// Titan-160 Step 1: Real-time polynomial thermal drift cancellation
-		thermalCalibrator.applyCorrection(lastReadTemperature, gyroData);
-
-		// Titan-160 Step 2: Bio-Stance & Micro-ZUPT detection & fast drift suppression
-		bioStanceDetector.update(gyroData, m_lastAccelData, calibrator.getGyroTimestep());
-		bioStanceDetector.correctGyro(gyroData, gyroData);
-
-		// Feed stationary data to continuous thermal RLS training
-		bool isStill = bioStanceDetector.isStance() || m_fusion.getRestDetected();
-		thermalCalibrator.feedSample(lastReadTemperature, gyroData, isStill);
-
 		m_fusion.updateGyro(gyroData, calibrator.getGyroTimestep());
 
 		calibrator.provideGyroSample(xyz);
@@ -398,10 +380,6 @@ public:
 	uint32_t m_lastRotationUpdateMillis = 0;
 	uint32_t m_lastRotationPacketSent = 0;
 	uint32_t m_lastTemperaturePacketSent = 0;
-
-	sensor_real_t m_lastAccelData[3]{0.0f, 0.0f, 9.80665f};
-	SlimeVR::MotionProcessing::BioStanceDetector bioStanceDetector;
-	SlimeVR::MotionProcessing::ThermalPolyCalibrator thermalCalibrator;
 
 	RestCalibrationDetector calibrationDetector;
 

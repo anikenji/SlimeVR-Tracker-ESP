@@ -168,18 +168,12 @@ void VQF::updateAcc(const vqf_real_t acc[3])
             matrix3SetToScaledIdentity(1.0, R);
             std::fill(w, w+3, coeffs.biasRestW);
         } else if (params.motionBiasEstEnabled) {
-            float normAcc = sqrt(acc[0]*acc[0] + acc[1]*acc[1] + acc[2]*acc[2]);
-            float accDev = fabs(normAcc - 9.80665f);
-            if (params.motionBiasAccGateEnabled && accDev > params.motionBiasAccGate) {
-                std::fill(w, w+3, -1); // disable update due to dynamic acceleration
-            } else {
-                e[0] = -accEarth[1]/coeffs.accTs + biasLp[0] - R[0]*state.bias[0] - R[1]*state.bias[1] - R[2]*state.bias[2];
-                e[1] = accEarth[0]/coeffs.accTs + biasLp[1] - R[3]*state.bias[0] - R[4]*state.bias[1] - R[5]*state.bias[2];
-                e[2] = - R[6]*state.bias[0] - R[7]*state.bias[1] - R[8]*state.bias[2];
-                w[0] = coeffs.biasMotionW;
-                w[1] = coeffs.biasMotionW;
-                w[2] = coeffs.biasVerticalW;
-            }
+            e[0] = -accEarth[1]/coeffs.accTs + biasLp[0] - R[0]*state.bias[0] - R[1]*state.bias[1] - R[2]*state.bias[2];
+            e[1] = accEarth[0]/coeffs.accTs + biasLp[1] - R[3]*state.bias[0] - R[4]*state.bias[1] - R[5]*state.bias[2];
+            e[2] = - R[6]*state.bias[0] - R[7]*state.bias[1] - R[8]*state.bias[2];
+            w[0] = coeffs.biasMotionW;
+            w[1] = coeffs.biasMotionW;
+            w[2] = coeffs.biasVerticalW;
         } else {
             std::fill(w, w+3, -1); // disable update
         }
@@ -467,16 +461,6 @@ void VQF::setMotionBiasEstEnabled(bool enabled)
     params.motionBiasEstEnabled = enabled;
     std::fill(state.motionBiasEstRLpState, state.motionBiasEstRLpState + 9*2, NaN);
     std::fill(state.motionBiasEstBiasLpState, state.motionBiasEstBiasLpState + 2*2, NaN);
-}
-
-void VQF::setMotionBiasAccGateEnabled(bool enabled)
-{
-    params.motionBiasAccGateEnabled = enabled;
-}
-
-void VQF::setMotionBiasAccGate(vqf_real_t gate)
-{
-    params.motionBiasAccGate = gate;
 }
 #endif
 
