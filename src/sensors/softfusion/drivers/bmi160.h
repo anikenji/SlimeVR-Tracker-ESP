@@ -165,8 +165,9 @@ struct BMI160 {
 	float getDirectTemp() const {
 		// 0x0 is 23C
 		// Resolution is 1/2^9 K / LSB
+		// Register 0x20 is signed 16-bit integer (two's complement)
 		constexpr float step = 1 / 512.0f;
-		const uint16_t value = m_RegisterInterface.readReg16(Regs::TempData);
+		const int16_t value = static_cast<int16_t>(m_RegisterInterface.readReg16(Regs::TempData));
 		return value * step + 23.0f;
 	}
 
