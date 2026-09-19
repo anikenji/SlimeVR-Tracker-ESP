@@ -80,6 +80,23 @@ struct VQFParams {
 	 * correction only, i.e. without using magnetometer measurements.
 	 */
 	bool motionBiasEstEnabled = true;
+	/**
+	 * @brief Enables acceleration gating for motion bias estimation.
+	 *
+	 * If set to true (default), motion bias estimation updates are gated when
+	 * linear acceleration deviation from gravity exceeds #motionBiasAccGate.
+	 */
+	bool motionBiasAccGateEnabled = true;
+	/**
+	 * @brief Acceleration deviation gate threshold for motion bias estimation (in m/s²).
+	 *
+	 * When the acceleration norm deviates from gravity (9.80665 m/s²) by more than
+	 * this threshold, motion bias filter updates are skipped to avoid corrupting
+	 * the gyroscope bias estimate.
+	 *
+	 * Default value: 0.8 m/s²
+	 */
+	vqf_real_t motionBiasAccGate = 0.8f;
 #endif
 	/**
 	 * @brief Enables rest detection and gyroscope bias estimation during rest phases.
@@ -853,6 +870,14 @@ public:
 	 * @brief Enables/disabled gyroscope bias estimation during motion.
 	 */
 	void setMotionBiasEstEnabled(bool enabled);
+	/**
+	 * @brief Enables/disables acceleration gating for motion bias estimation.
+	 */
+	void setMotionBiasAccGateEnabled(bool enabled);
+	/**
+	 * @brief Sets the acceleration deviation gate threshold for motion bias estimation (in m/s²).
+	 */
+	void setMotionBiasAccGate(vqf_real_t gate);
 #endif
 	/**
 	 * @brief Enables/disables rest detection and bias estimation during rest.

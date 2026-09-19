@@ -20,7 +20,13 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
 */
+#if __has_include(<Arduino.h>)
 #include <Arduino.h>
+#endif
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <utility>
 
 #ifndef ONLINE_POLYFIT_H
 #define ONLINE_POLYFIT_H

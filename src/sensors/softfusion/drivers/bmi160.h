@@ -60,8 +60,10 @@ struct BMI160 {
 	static constexpr VQFParams SensorVQFParams{
 		// need to be refined, this IMU sucks
 		.motionBiasEstEnabled = true,
-		.biasSigmaInit = 0.5f,
-		.biasClip = 2.0f,
+		.motionBiasAccGateEnabled = true,
+		.motionBiasAccGate = 0.8f,
+		.biasSigmaInit = 0.3f,
+		.biasClip = 1.0f,
 		.restThGyr = 0.5f,
 		.restThAcc = 0.196f,
 	};
