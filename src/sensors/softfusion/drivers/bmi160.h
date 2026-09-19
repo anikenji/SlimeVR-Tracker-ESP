@@ -30,6 +30,7 @@
 #include <limits>
 
 #include "../../../sensorinterface/RegisterInterface.h"
+#include "callbacks.h"
 #include "vqf.h"
 
 namespace SlimeVR::Sensors::SoftFusion::Drivers {
@@ -184,12 +185,7 @@ struct BMI160 {
 		return to_ret;
 	}
 
-	template <typename AccelCall, typename GyroCall, typename TempCall>
-	void bulkRead(
-		AccelCall&& processAccelSample,
-		GyroCall&& processGyroSample,
-		TempCall&& processTempSample
-	) {
+	void bulkRead(DriverCallbacks<int16_t>&& callbacks) {
 		const auto fifo_bytes = m_RegisterInterface.readReg16(Regs::FifoLength) & 0x7FF;
 
 		const auto bytes_to_read = std::min(
@@ -220,7 +216,7 @@ struct BMI160 {
 					gyro[0] = getFromFifo<uint16_t>(i, read_buffer);
 					gyro[1] = getFromFifo<uint16_t>(i, read_buffer);
 					gyro[2] = getFromFifo<uint16_t>(i, read_buffer);
-					processGyroSample(gyro, GyrTs);
+					callbacks.processGyroSample(gyro, GyrTs);
 				}
 
 				if (header & Fifo::AccelDataBit) {
@@ -228,10 +224,23 @@ struct BMI160 {
 					accel[0] = getFromFifo<uint16_t>(i, read_buffer);
 					accel[1] = getFromFifo<uint16_t>(i, read_buffer);
 					accel[2] = getFromFifo<uint16_t>(i, read_buffer);
-					processAccelSample(accel, AccTs);
+					callbacks.processAccelSample(accel, AccTs);
 				}
 			}
 		}
+	}
+
+	template <typename AccelCall, typename GyroCall, typename TempCall>
+	void bulkRead(
+		AccelCall&& processAccelSample,
+		GyroCall&& processGyroSample,
+		TempCall&& processTempSample
+	) {
+		bulkRead(DriverCallbacks<int16_t>{
+			std::forward<AccelCall>(processAccelSample),
+			std::forward<GyroCall>(processGyroSample),
+			std::forward<TempCall>(processTempSample)
+		});
 	}
 };
 
