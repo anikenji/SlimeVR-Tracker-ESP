@@ -59,10 +59,12 @@ struct BMI160 {
 		= 2.0f;  // wow maybe BMI270 isn't that bad actually
 
 	static constexpr VQFParams SensorVQFParams{
-		// need to be refined, this IMU sucks
+		// Tuned for BMI160 dynamic stability
+		.tauAcc = 5.5f,
 		.motionBiasEstEnabled = true,
 		.biasSigmaInit = 0.5f,
-		.biasClip = 2.0f,
+		.biasClip = 1.0f,
+		.biasVerticalForgettingFactor = 0.0005f,
 		.restThGyr = 0.5f,
 		.restThAcc = 0.196f,
 	};
@@ -92,7 +94,7 @@ struct BMI160 {
 
 		struct AccelConf {
 			static constexpr uint8_t reg = 0x40;
-			static constexpr uint8_t value = 0b0101000;  // 100Hz, filter mode normal
+			static constexpr uint8_t value = 0b0001000;  // 100Hz, OSR4 hardware oversampling filter
 		};
 
 		struct AccelRange {
